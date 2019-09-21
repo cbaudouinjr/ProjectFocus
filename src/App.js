@@ -3,6 +3,8 @@ import { zipSamples, MuseClient } from 'muse-js';
 import { powerByBand, epoch, fft } from '@neurosity/pipes';
 import Visualization from './Visualization';
 import './App.css';
+import { UserSession } from "blockstack";
+import { appConfig } from "./constants";
 
 class App extends Component {
   state = {
@@ -10,8 +12,31 @@ class App extends Component {
     telemetry: {},
     data: {},
     showVisualization: true,
-    demoType: 'visualization'
+    demoType: 'visualization',
+    userSession: new UserSession({ appConfig })
   };
+
+    componentDidMount = async () => {
+      const { userSession } = this.state;
+  if (!userSession.isUserSignedIn() && userSession.isSignInPending()) {
+        const userData = await userSession.handlePendingSignIn();
+  if (!userData.username) {
+          throw new Error("This app requires a username");
+        }
+  window.location = "/";
+      }
+    };
+
+  handleSignIn = () => {
+      const { userSession } = this.state;
+      userSession.redirectToSignIn();
+    };
+
+  handleSignOut = () => {
+      const { userSession } = this.state;
+      userSession.signUserOut();
+      window.location = "/";
+    };
 
   subscribeToMuse = async () => {
     try {
@@ -104,7 +129,9 @@ class App extends Component {
   };
 
   render() {
-    const { status, telemetry, demoType } = this.state;
+
+    const { status, telemetry, demoType, userSession } = this.state;
+    
 
     const statusText = status ? 'Connected' : 'Disconnected';
     const batteryLevel = telemetry.batteryLevel || 0;
@@ -124,6 +151,22 @@ class App extends Component {
             </div>
             <div style={{ color: `white` }}>Battery: {batteryLevel}%</div>
             <div>Status: {statusText}</div>
+
+
+            <div className="blockstackbutton">
+              {userSession.isUserSignedIn() ? (
+                <button className="button" onClick={this.handleSignOut}>
+                <strong>Sign Out</strong>
+                </button>
+            ) : (
+                <button className="button" onClick={this.handleSignIn}>
+                <strong>Sign In</strong>
+                </button>
+            )}
+            </div>
+
+
+
           </li>
         </ul>
         <div style={{ paddingTop: `70px` }}>{this.renderDemoType()}</div>
