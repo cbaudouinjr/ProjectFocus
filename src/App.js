@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { zipSamples, MuseClient } from 'muse-js';
 import { powerByBand, epoch, fft } from '@neurosity/pipes';
 import Visualization from './Visualization';
-import HackerTyper from './HackerTyper';
-import FidgetSpinner from './FidgetSpinner';
-import FlappyBrick from './flappy-brick/FlappyBrick';
 import './App.css';
 
 class App extends Component {
@@ -97,34 +94,9 @@ class App extends Component {
     );
   };
 
-  renderHackerTyper = _ => {
-    const { data } = this.state;
-    document.body.style = 'background: black; color: white;';
-    return <HackerTyper data={data} speed={this.getAverageGamma()} />;
-  };
-
-  renderFidgetSpinner = _ => {
-    const { data } = this.state;
-    document.body.style = 'background: black;';
-    return <FidgetSpinner data={data} speed={this.getAverageAlpha()} />;
-  };
-
-  renderFlappyBrick = _ => {
-    return <FlappyBrick speed={this.getAverageGamma()} />;
-  };
-
   renderDemoType = _ => {
     const { demoType } = this.state;
-    switch (demoType) {
-      case 'hackertyper':
-        return this.renderHackerTyper();
-      case 'fidgetspinner':
-        return this.renderFidgetSpinner();
-      case 'flappybrick':
-        return this.renderFlappyBrick();
-      default:
-        return this.renderVisualization();
-    }
+    return this.renderVisualization();
   };
 
   handleDemoTypeChange = e => {
@@ -145,24 +117,6 @@ class App extends Component {
             onClick={this.handleDemoTypeChange}
           >
             <div className="visualization">Visualization</div>
-          </li>
-          <li
-            className={`${demoType === 'hackertyper' ? 'active' : ''}`}
-            onClick={this.handleDemoTypeChange}
-          >
-            <div className="hackertyper">Hacker Typer</div>
-          </li>
-          <li
-            className={`${demoType === 'fidgetspinner' ? 'active' : ''}`}
-            onClick={this.handleDemoTypeChange}
-          >
-            <div className="fidgetspinner">Fidget Spinner</div>
-          </li>
-          <li
-            className={`${demoType === 'flappybrick' ? 'active' : ''}`}
-            onClick={this.handleDemoTypeChange}
-          >
-            <div className="flappybrick">Flappy Brick</div>
           </li>
           <li style={{ float: `right`, display: `flex` }}>
             <div onClick={this.subscribeToMuse} disabled={status}>
