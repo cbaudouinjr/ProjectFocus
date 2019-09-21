@@ -41,8 +41,11 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.postData()
-    setInterval(this.postData, 1000);
+    const { status } = this.state;
+    if (status) {
+      this.postData()
+      setInterval(this.postData, 1000);
+    }
   }
 
   async postData() {
