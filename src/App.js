@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { zipSamples, MuseClient } from 'muse-js';
+import axios from 'axios';
 import { powerByBand, epoch, fft } from '@neurosity/pipes';
 import Visualization from './Visualization';
 import './App.css';
@@ -38,6 +39,32 @@ class App extends Component {
       console.error('Connection failed', err);
     }
   };
+
+  componentDidMount() {
+    this.postData()
+    setInterval(this.postData, 10000);
+  }
+
+  async postData() {
+    const { data } = this.state;
+    try {
+      const response = await axios.post(
+        'http://projectfocus.appspot.com/snapshot',
+        {
+          user: "chrisb",
+          alpha: data.alpha,
+          beta: data.beta,
+          delta: data.delta,
+          gamma: data.gamma,
+          theta: data.theta
+        },
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
 
   getAverageGamma = _ => {
     const { data } = this.state;
