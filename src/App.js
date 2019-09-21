@@ -42,7 +42,7 @@ class App extends Component {
 
   componentDidMount() {
     this.postData()
-    setInterval(this.postData, 10000);
+    setInterval(this.postData, 1000);
   }
 
   async postData() {
