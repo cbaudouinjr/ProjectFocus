@@ -41,32 +41,32 @@ class App extends Component {
   };
 
   componentDidMount() {
-    const { status } = this.state;
-    if (status) {
-      this.postData()
-      setInterval(this.postData, 1000);
-    }
+    this.postData();
+    setInterval(this.postData, 1000);
   }
 
   async postData() {
-    const { data } = this.state;
-    try {
-      const response = await axios.post(
-        'http://projectfocus.appspot.com/snapshot',
-        {
-          user: "chrisb",
-          alpha: data.alpha,
-          beta: data.beta,
-          delta: data.delta,
-          gamma: data.gamma,
-          theta: data.theta
-        },
-      );
-      console.log(response.data);
-    } catch (e) {
-      console.log(e);
+    const { status, data } = this.state;
+    if (status) {
+      try {
+        const response = await axios.post(
+          'http://projectfocus.appspot.com/snapshot',
+          {
+            user: "chrisb",
+            alpha: data.alpha,
+            beta: data.beta,
+            delta: data.delta,
+            gamma: data.gamma,
+            theta: data.theta
+          },
+        );
+        console.log(response.data);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
+
 
 
   getAverageGamma = _ => {
@@ -125,7 +125,6 @@ class App extends Component {
   };
 
   renderDemoType = _ => {
-    const { demoType } = this.state;
     return this.renderVisualization();
   };
 
