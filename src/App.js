@@ -25,6 +25,7 @@ class App extends Component {
       await client.connect();
       await client.start();
 
+    
       client.telemetryData.subscribe(telemetry => this.setState({ telemetry }));
       zipSamples(client.eegReadings)
         .pipe(
