@@ -35,46 +35,54 @@ class App extends Component {
         )
         .subscribe(data => {
           this.setState({ data });
+          this.apiCall(data);
         });
     } catch (err) {
       console.error('Connection failed', err);
     }
   };
 
-  componentDidMount() {
+  apiCall = _ => {
     const { status } = this.state;
     if (status) {
-      this.postData()
+      this.postData();
       setInterval(this.postData, 1000);
     }
   }
 
-  async postData() {
-    const { data } = this.state;
+  postData = async () => {
     try {
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      }
       const response = await axios.post(
         'http://projectfocus.appspot.com/snapshot',
         {
           user: "chrisb",
-          alpha: data.alpha,
-          beta: data.beta,
-          delta: data.delta,
-          gamma: data.gamma,
-          theta: data.theta
+          alpha: this.getAverageAlpha(),
+          beta: this.getAverageBeta(),
+          delta: this.getAverageDelta(),
+          gamma: this.getAverageGamma(),
+          theta: this.getAverageTheta()
         },
+        {
+          headers: headers
+        }
       );
       console.log(response.data);
     } catch (e) {
       console.log(e);
     }
-  }
+  };
+
 
 
   getAverageGamma = _ => {
     const { data } = this.state;
 
     if (data.gamma) {
-      const focus = data.gamma.reduce((sum, x) => sum + x) / data.gamma.length;
+      const focus = (data.gamma.reduce((sum, x) => sum + x) / data.gamma.length);
       return focus;
     }
 
@@ -85,7 +93,39 @@ class App extends Component {
     const { data } = this.state;
 
     if (data.alpha) {
-      return 1 / (data.alpha.reduce((sum, x) => sum + x) / data.alpha.length);
+      return (data.alpha.reduce((sum, x) => sum + x) / data.alpha.length);
+    }
+
+    return 0;
+  };
+
+  getAverageBeta = _ => {
+    const { data } = this.state;
+
+    if (data.beta) {
+      const focus = (data.beta.reduce((sum, x) => sum + x) / data.beta.length);
+      return focus;
+    }
+
+    return 0;
+  };
+
+  getAverageTheta = _ => {
+    const { data } = this.state;
+
+    if (data.theta) {
+      return (data.theta.reduce((sum, x) => sum + x) / data.theta.length);
+    }
+
+    return 0;
+  };
+
+  getAverageDelta = _ => {
+    const { data } = this.state;
+
+    if (data.delta) {
+      const focus = (data.delta.reduce((sum, x) => sum + x) / data.delta.length);
+      return focus;
     }
 
     return 0;
@@ -126,7 +166,6 @@ class App extends Component {
   };
 
   renderDemoType = _ => {
-    const { demoType } = this.state;
     return this.renderVisualization();
   };
 
@@ -153,6 +192,7 @@ class App extends Component {
             <div onClick={this.subscribeToMuse} disabled={status}>
               Connect
             </div>
+            <div onClick={this.postData}>Collecting</div>
             <div style={{ color: `white` }}>Battery: {batteryLevel}%</div>
             <div>Status: {statusText}</div>
           </li>
